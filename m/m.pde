@@ -18,6 +18,14 @@
 #define minPosition 64
 #define maxPosition 4080
 #define SERVO_COUNT 18
+#define led6 6
+#define led7 7
+#define led8 8
+#define led9 9
+#define led10 10
+#define led11 11
+#define led12 12
+#define led13 13
 
 //first day in steelMountain, part1
 #define danceFile "dance1.txt"
@@ -92,6 +100,17 @@ void setup(){
 	bitWrite(bt,2,1);
 	fileSwitch=0;
 	initPosition();
+}
+
+void initLeds(){
+	pinMode(led6, OUTPUT);
+	pinMode(led7, OUTPUT);
+	pinMode(led8, OUTPUT);
+	pinMode(led9, OUTPUT);
+	pinMode(led10, OUTPUT);
+	pinMode(led11, OUTPUT);
+	pinMode(led12, OUTPUT);
+	pinMode(led13, OUTPUT);
 }
 
 void loop(){
