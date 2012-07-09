@@ -18,30 +18,17 @@
 #define minPosition 64
 #define maxPosition 4080
 #define SERVO_COUNT 18
-#define led6 6
-#define led7 7
-#define led8 8
-#define led9 9
-#define led10 10
-#define led11 11
-#define led12 12
-#define led13 13
 
 //first day in steelMountain, part1
 #define danceFile "dance1.txt"
-
 //first day in steelMountain, part2
 #define danceFile2 "dance2.txt"
-
 //second day in steelMountain
 #define danceFile3 "dance3.txt"
-
 //free
 #define testFile "test1.txt"
-
 //free
 #define testFile2 "test2.txt"
-
 //walk
 #define testFile3 "test3.txt"
 
@@ -100,18 +87,23 @@ void setup(){
 	bitWrite(bt,2,1);
 	fileSwitch=0;
 	initPosition();
+	// initLeds();
 }
 
 void initLeds(){
-	pinMode(led6, OUTPUT);
-	pinMode(led7, OUTPUT);
-	pinMode(led8, OUTPUT);
-	pinMode(led9, OUTPUT);
-	pinMode(led10, OUTPUT);
-	pinMode(led11, OUTPUT);
-	pinMode(led12, OUTPUT);
-	pinMode(led13, OUTPUT);
+	for(int j=6;j<=10;++j){
+		pinMode(j, OUTPUT);
+	}
 }
+
+void ledBlink(int trigger){
+	for(int j=6;j<=10;++j){
+		digitalWrite(j, trigger);
+		delay(100);
+	}
+}
+
+int ledTrigger=0;
 
 void loop(){
 	parse();
@@ -122,7 +114,7 @@ void setupBlueToothConnection(){
 	delay(1000);
 	blueToothSerial.print("\r\n+STWMOD=0\r\n"); //set the bluetooth work in slave mode
 	blueToothSerial.print("\r\n+STNA=Callitco\r\n"); //set the bluetooth name as "SeeedBTSlave"
-	blueToothSerial.print("\r\n+STPIN=4321\r\n"); //pair code
+	//blueToothSerial.print("\r\n+STPIN=4321\r\n"); //pair code
 	blueToothSerial.print("\r\n+STOAUT=1\r\n"); // Permit Paired device to connect me
 	blueToothSerial.print("\r\n+STAUTO=0\r\n"); // Auto-connection should be forbidden here
 	delay(2000); // This delay is required.
