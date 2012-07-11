@@ -19,17 +19,11 @@
 #define maxPosition 4080
 #define SERVO_COUNT 18
 
-//first day in steelMountain, part1
 #define danceFile "dance1.txt"
-//first day in steelMountain, part2
 #define danceFile2 "dance2.txt"
-//second day in steelMountain
 #define danceFile3 "dance3.txt"
-//free
 #define testFile "test1.txt"
-//free
 #define testFile2 "test2.txt"
-//walk
 #define testFile3 "test3.txt"
 
 #define DEBUG 0
@@ -102,8 +96,6 @@ void ledBlink(int trigger){
 		delay(100);
 	}
 }
-
-int ledTrigger=0;
 
 void loop(){
 	parse();
@@ -640,7 +632,8 @@ void moveServos(){
 			Serial.print("\r\n");
 			#endif
 			
-			if((millis()-timeStart)>=64+(servoSpeed<<5)){break;}
+			// if((millis()-timeStart)>=64+(servoSpeed<<5)){break;}
+			if((millis()-timeStart)>=(servoSpeed<<5)){break;}
 		}
 	}
 	else if(ii==SERVO_COUNT){
@@ -681,20 +674,20 @@ unsigned char BBtoB(unsigned short BB){
 void initPosition(){
 	loadServoPos();
 	
-	servoPos[0]=5884;
-	servoPos[1]=8920; 
-	servoPos[2]=7780; 
-	servoPos[3]=6200;
-	servoPos[4]=5124; 
-	servoPos[5]=5884; 
-	servoPos[6]=4112;
-	servoPos[7]=4680; 
-	servoPos[8]=5628; 
-	servoPos[9]=5756; 
-	servoPos[10]=2656; 
-	servoPos[11]=8412;
-	servoPos[12]=3796; 
-	servoPos[13]=3100; 
+	servoPos[0]=5376;
+	servoPos[1]=4160;
+	servoPos[2]=6208;
+	servoPos[3]=5440;
+	servoPos[4]=3904;
+	servoPos[5]=5760;
+	servoPos[6]=1408;
+	servoPos[7]=7808;
+	servoPos[8]=7616;
+	servoPos[9]=6592;
+	servoPos[10]=6016;
+	servoPos[11]=4928;
+	servoPos[12]=6208;
+	servoPos[13]=6208;
 	servoPos[14]=9296;
 	servoPos[15]=3100; 
 	servoPos[16]=7084;
