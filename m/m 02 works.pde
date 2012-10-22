@@ -19,6 +19,13 @@
 #define maxPosition 2256
 #define SERVO_COUNT 18
 
+#define danceFile "dance1.txt"
+#define danceFile2 "dance2.txt"
+#define danceFile3 "dance3.txt"
+#define testFile "test1.txt"
+#define testFile2 "test2.txt"
+#define testFile3 "test3.txt"
+
 #define DEBUG 0
 
 unsigned char fileSwitch;
@@ -28,7 +35,6 @@ unsigned char BT[128],BTi;//BlueTooth Bytes
 unsigned char i,ii,iii;
 unsigned long fileCur;
 unsigned long timeStart;
-char filename[]="file0";
 
 unsigned char servoPosSize,servoPosKeys[SERVO_COUNT],servoPosSizeOld,servoPosKeysOld[SERVO_COUNT];
 unsigned short servoPos[SERVO_COUNT],servoPosOld[SERVO_COUNT];
@@ -37,11 +43,11 @@ NewSoftSerial blueToothSerial(rxBT,txBT);
 Maestro maestroPololu(rxMaestro,txMaestro);
 File myFile;
 
-void sdWrite(char file[]="file0");
-void sdRemove(char file[]="file0");
-void sdRead(char file[]="file0");
-bool loadServoPos(unsigned char source=0,char file[]="file0");
-void sdMoveServos(char file[]="file0");
+void sdWrite(char file[]=testFile);
+void sdRemove(char file[]=testFile);
+void sdRead(char file[]=testFile);
+bool loadServoPos(unsigned char source=0,char file[]=testFile);
+void sdMoveServos(char file[]=testFile);
 
 void setup(){
 	pinMode(resetPin, OUTPUT);
@@ -78,7 +84,6 @@ void setup(){
 	// initLeds();
 }
 
-/*
 void initLeds(){
 	for(int j=6;j<=10;++j){
 		pinMode(j, OUTPUT);
@@ -91,7 +96,6 @@ void ledBlink(int trigger){
 		delay(100);
 	}
 }
-*/
 
 void loop(){
 	parse();
@@ -129,7 +133,7 @@ void reset(){
 	servoSpeed=0;
 }
 
-void readPositionSD(char file[]){
+void readPositionSD(char file[]=testFile){
 	unsigned char B;
 	myFile=SD.open(file,FILE_WRITE);
 	for(i=0;i<SERVO_COUNT;++i){
@@ -289,45 +293,6 @@ void parse(){
 	//--bluetooth}	
 }
 
-void fileIO(unsigned char cmd){
-// we have global fileSwitch;
-// cmd: 0=sdWrite; 1=sdPlay; 2=sdRemove;
-	// !TODO redo{
-	if(fileSwitch==0){
-		filename[4]='0';
-	}else if(fileSwitch==1){
-		filename[4]='1';
-	}else if(fileSwitch==2){
-		filename[4]='2';
-	}else if(fileSwitch==3){
-		filename[4]='3';
-	}else if(fileSwitch==4){
-		filename[4]='4';
-	}else if(fileSwitch==5){
-		filename[4]='5';
-	}else if(fileSwitch==6){
-		filename[4]='6';
-	}else if(fileSwitch==7){
-		filename[4]='7';
-	}else if(fileSwitch==8){
-		filename[4]='8';
-	}else if(fileSwitch==9){
-		filename[4]='9';
-	}
-	// !TODO redo}
-	
-	if(cmd==0){
-		if(!fileCur){fileCur=0;}
-		sdWrite(filename);
-	}else if(cmd==1){
-		fileCur=0;moveServos();
-		while(loadServoPos(3,filename)){moveServos();}
-	}else if(cmd==2){
-		fileCur=0;
-		sdRemove(filename);
-	}
-}
-
 bool loadServoPos(unsigned char source,char file[]){
 // source: 0=from console?, 1=from maestro, 2=from BT with servoNum and servoPos, 3=from SD, 4=from BT all
 	// servoPos is old now{
@@ -449,7 +414,15 @@ void exec(){
 		blueToothSerial.print(1,BYTE);
 	}else if(cmd==3){//blueTooth sdWrite
 		loadServoPos(4);
-		fileIO(0);
+		if(fileSwitch==0){
+			sdWrite(testFile);
+		}
+		else if(fileSwitch==1){
+			sdWrite(testFile2);
+		}
+		else if(fileSwitch==2){
+			sdWrite(danceFile3);
+		}
 		blueToothSerial.print(1,BYTE);
 	}else if(cmd==10){//play SD main
 		/*
@@ -460,9 +433,32 @@ void exec(){
 		while(loadServoPos(3,danceFile2)){moveServos();}
 		delay(3000);
 		*/
-		fileIO(1);
+		if(fileSwitch==0){
+			// sdMoveServos(testFile);
+			fileCur=0;moveServos();
+			while(loadServoPos(3,testFile)){moveServos();}
+		}
+		else if(fileSwitch==1){
+			// sdMoveServos(testFile2);
+			fileCur=0;moveServos();
+			while(loadServoPos(3,testFile2)){moveServos();}
+		}
+		else if(fileSwitch==2){
+			// sdMoveServos(danceFile3);
+			fileCur=0;moveServos();
+			while(loadServoPos(3,danceFile3)){moveServos();}
+		}
 	}else if(cmd==11){//SD remove
-		fileIO(2);
+		fileCur=0;
+		if(fileSwitch==0){
+			sdRemove(testFile);
+		}
+		else if(fileSwitch==1){
+			sdRemove(testFile2);
+		}
+		else if(fileSwitch==2){
+			sdRemove(danceFile3);
+		}
 	}else if(cmd==12){//bluetooth read fileSwitch
 		fileSwitch=BT[start];
 		#if DEBUG
@@ -640,7 +636,7 @@ void moveServos(){
 			#endif
 			
 			// if((millis()-timeStart)>=64+(servoSpeed<<5)){break;}
-			if((millis()-timeStart)>=16+(servoSpeed<<5)){break;}
+			if((millis()-timeStart)>=(servoSpeed<<5)){break;}
 		}
 	}
 	else if(ii==SERVO_COUNT){
@@ -728,10 +724,9 @@ void moveServosPasha(){
 	}
 
 	short shift[SERVO_COUNT];
-	for(short i = 0; i < SERVO_COUNT; i ++){
+	for(short i = 0; i < SERVO_COUNT; i ++)
 		shift[i] = 0;
-	}
-	
+
 	unsigned short sv[SERVO_COUNT];
 	for(int i = 0; i < SERVO_COUNT; i ++){
 		sv[i] = servoPosOld[i];
